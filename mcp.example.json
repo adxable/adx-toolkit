@@ -1,0 +1,104 @@
+{
+  "_comment": "Example MCP configurations for different use cases. Pick what you need.",
+
+  "mcpServers": {
+
+    "_section_core": "=== CORE SERVERS (Recommended) ===",
+
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-sequential-thinking"],
+      "description": "Enhanced reasoning for complex multi-step problems",
+      "recommended": true
+    },
+
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-playwright"],
+      "description": "Browser automation - essential for frontend testing",
+      "recommended": true,
+      "usage": [
+        "Visual regression testing",
+        "E2E test verification",
+        "Screenshot capture for debugging"
+      ]
+    },
+
+    "_section_dev": "=== DEVELOPMENT SERVERS ===",
+
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-filesystem", "--root", "."],
+      "description": "Enhanced file operations with better search"
+    },
+
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-git"],
+      "description": "Git operations - history, blame, diff analysis"
+    },
+
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-fetch"],
+      "description": "HTTP client for API testing and debugging"
+    },
+
+    "_section_data": "=== DATA & PERSISTENCE ===",
+
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-memory"],
+      "description": "Key-value store for cross-session memory"
+    },
+
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-sqlite", "--db", ".claude/data.db"],
+      "description": "SQLite database for structured data storage"
+    },
+
+    "_section_external": "=== EXTERNAL SERVICES ===",
+
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub API - issues, PRs, repos"
+    },
+
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-slack"],
+      "env": {
+        "SLACK_TOKEN": "${SLACK_TOKEN}"
+      },
+      "description": "Slack integration for notifications"
+    },
+
+    "_section_specialized": "=== SPECIALIZED ===",
+
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-puppeteer"],
+      "description": "Alternative to Playwright for browser automation"
+    },
+
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@anthropics/mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      },
+      "description": "Web search capabilities"
+    }
+  },
+
+  "_usage_notes": {
+    "installation": "Copy desired servers to your .claude/mcp.json",
+    "env_vars": "Set required env vars in .env or shell",
+    "enable_in_settings": "Add server names to 'enabledMcpjsonServers' in settings.json"
+  }
+}

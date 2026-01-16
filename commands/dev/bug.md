@@ -1,54 +1,104 @@
-# Bug Fix Planning
+# Bug Planning
 
-Create a plan to investigate and fix a bug. This command creates a plan document only - it does NOT implement any fixes.
+Create a plan to resolve a bug. This command creates a plan document only - it does NOT fix any code.
 
 ## Arguments
 
-- `$ARGUMENTS` - Bug description or error message
+- `$ARGUMENTS` - Bug description (text) or path to prompt file
 
 ## Configuration
 
 Load project configuration from `.claude/frontend-dev-toolkit.json`.
 
-## Critical Rules
+## ⛔ CRITICAL: PLANNING ONLY - NO IMPLEMENTATION
 
-**This command creates a PLAN only. You MUST NOT implement any fixes.**
+**This command creates a PLAN only. You MUST NOT implement any changes.**
 
-## Instructions
+### Forbidden Actions
+- ❌ DO NOT edit any source files (only create the plan file)
+- ❌ DO NOT fix the bug
+- ❌ DO NOT modify any code
+- ❌ DO NOT run implementation commands
+- ❌ DO NOT make "quick fixes" even if they seem obvious
 
-### Step 1: Load Configuration and Skills
+### Required Actions
+- ✅ Research and analyze the bug
+- ✅ Identify root cause
+- ✅ Create the plan file in the specs directory
+- ✅ Display the "PLAN CREATED SUCCESSFULLY" message
+- ✅ Suggest running `/dev:implement {plan_path}` for implementation
+- ✅ STOP after showing the suggested next steps
+
+### Workflow Enforcement
+```
+/dev:bug → Creates plan file → STOPS → User reviews plan → User runs /dev:implement
+```
+
+## Agent Invocation
+
+Before starting the planning process, print this announcement:
 
 ```
 ═══════════════════════════════════════════════════
 🚀 Invoking [frontend-architect] agent...
-   └─ Task: Bug Fix Planning
-   └─ Tech Stack: {from config}
+   └─ Task: Bug Analysis & Planning
+   └─ Model: opus
 ═══════════════════════════════════════════════════
 ```
 
-### Step 2: Investigate the Bug
+Then apply the frontend-architect agent's principles:
+- Print `🏗️  [frontend-architect] Starting bug analysis...` when beginning
+- Print `📚 [frontend-architect] Loading skill: {skill-name}` when referencing skills
+- Print `🔍 [frontend-architect] Investigating: {area}` when researching
+- Print `🎯 [frontend-architect] Root cause identified: {cause}` when found
+- Print `✅ [frontend-architect] Planning complete.` when finished
 
-Based on the bug description in `$ARGUMENTS`:
+## Instructions
+
+### Step 1: Load Configuration
+
+Read `.claude/frontend-dev-toolkit.json` to get project settings.
+
+### Step 2: Parse Input
+
+**If $ARGUMENTS is a file path:**
+- Read the file and extract bug information
+- Look for XML tags: `<problem_statement>`, `<reproduction_steps>`, `<expected_behavior>`
+
+**If $ARGUMENTS is text:**
+- Use it directly as the bug description
+
+### Step 3: Investigate the Bug
+
+```
+🏗️  [frontend-architect] Starting bug analysis...
+```
+
+Based on the bug description:
 
 1. **Search for related code:**
-   - Use grep to find relevant files
+   ```
+   🔍 [frontend-architect] Investigating: {component/area}
+   ```
+   - Find relevant files
    - Look for error messages, component names, function names
 
 2. **Identify the affected area:**
    - Which component(s)?
    - Which feature?
-   - Which API endpoint?
+   - Which data flow?
 
-3. **Understand the current behavior:**
+3. **Trace to root cause:**
    - Read the relevant code
-   - Trace the data flow
-   - Identify the root cause
+   - Follow the data flow
+   - Identify the actual cause
 
-4. **Determine the expected behavior:**
-   - What should happen instead?
-   - Are there similar working implementations?
+4. **Announce root cause:**
+   ```
+   🎯 [frontend-architect] Root cause identified: {brief cause}
+   ```
 
-### Step 3: Create Bug Fix Plan
+### Step 4: Create Bug Fix Plan
 
 Create the plan file at `{specsPath}/bug-{descriptive-name}.md`:
 
@@ -76,7 +126,7 @@ Create the plan file at `{specsPath}/bug-{descriptive-name}.md`:
 
 {What should happen instead}
 
-## Current Behavior
+## Actual Behavior
 
 {What is currently happening}
 
@@ -92,42 +142,50 @@ Create the plan file at `{specsPath}/bug-{descriptive-name}.md`:
 
 ### Affected Files
 
-- `{path/to/file1}` - {how it's affected}
-- `{path/to/file2}` - {how it's affected}
+- `{path/to/file}:{line}` - {how it's affected}
 
-## Solution Approach
+## Solution Statement
 
-### Option 1 (Recommended): {Approach name}
+{How the fix will solve the problem}
 
-{Description of the fix}
+## Relevant Files
 
-**Pros:**
-- {Pro 1}
-- {Pro 2}
+### Files to Modify
+- {path/to/file} - {what needs to change}
 
-**Cons:**
-- {Con 1}
+### Files to Reference
+- {path/to/file} - {why it's relevant}
 
-### Option 2: {Alternative approach}
+## Step by Step Tasks
 
-{Description of alternative}
+IMPORTANT: Execute every step in order, top to bottom.
 
-## Implementation Plan
+### 1. {First Fix Step}
+- {Specific change to make}
 
-### Step 1: {Fix description}
-- {Specific change}
-- {File to modify}
+### 2. {Second Fix Step}
+- {Specific change to make}
 
-### Step 2: {Verification}
-- {How to verify the fix}
+### 3. Validate Fix
+- Run type checking
+- Run linting
+- Run build
+- Verify bug is fixed
+
+## Performance Considerations
+
+**Will this fix introduce re-render risks?**
+- [ ] No new state that could cascade re-renders
+- [ ] No inline objects/functions passed to children
+- [ ] Existing memoization patterns preserved
 
 ## Testing Strategy
 
-### Regression Testing
-- Ensure existing functionality still works
-
 ### Bug Verification
-- Confirm the bug is fixed
+- {How to verify the fix works}
+
+### Regression Testing
+- {What to check hasn't broken}
 
 ### Edge Cases
 - {Edge case to test}
@@ -144,18 +202,20 @@ Create the plan file at `{specsPath}/bug-{descriptive-name}.md`:
 
 - [ ] Bug no longer occurs
 - [ ] No regression in related functionality
-- [ ] All tests pass
+- [ ] All validation commands pass
 
 ## Notes
 
-{Any additional context or related issues}
+{Additional context, related issues, or considerations}
 ```
 
-### Step 4: Display Success Message
+### Step 5: Display Success Message
 
 ```
+✅ [frontend-architect] Planning complete.
+
 ═══════════════════════════════════════════════════
-           BUG FIX PLAN CREATED
+            PLAN CREATED SUCCESSFULLY
 ═══════════════════════════════════════════════════
 
 Plan saved to: {plan_file_path}
@@ -170,6 +230,8 @@ Recommended Fix: {approach summary}
 To implement this bug fix, run:
 
   /dev:implement {plan_file_path}
+
+This will execute the step-by-step tasks from your plan.
 
 ═══════════════════════════════════════════════════
 ```

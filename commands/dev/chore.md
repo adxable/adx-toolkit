@@ -10,26 +10,59 @@ Create a plan for maintenance, refactoring, or technical debt work. This command
 
 Load project configuration from `.claude/frontend-dev-toolkit.json`.
 
-## Critical Rules
+## ⛔ CRITICAL: PLANNING ONLY - NO IMPLEMENTATION
 
 **This command creates a PLAN only. You MUST NOT implement any changes.**
 
-## Instructions
+### Forbidden Actions
+- ❌ DO NOT edit any source files (only create the plan file)
+- ❌ DO NOT complete the chore
+- ❌ DO NOT modify any code
+- ❌ DO NOT run implementation commands
 
-### Step 1: Load Configuration
+### Required Actions
+- ✅ Research and analyze the chore requirements
+- ✅ Create the plan file in the specs directory
+- ✅ Display the "PLAN CREATED SUCCESSFULLY" message
+- ✅ Suggest running `/dev:implement {plan_path}` for implementation
+- ✅ STOP after showing the suggested next steps
+
+### Workflow Enforcement
+```
+/dev:chore → Creates plan file → STOPS → User reviews plan → User runs /dev:implement
+```
+
+## Agent Invocation
+
+Before starting the planning process, print this announcement:
 
 ```
 ═══════════════════════════════════════════════════
 🚀 Invoking [frontend-architect] agent...
    └─ Task: Chore Planning
-   └─ Type: Maintenance/Refactoring
+   └─ Model: opus
 ═══════════════════════════════════════════════════
 ```
 
+Then apply the frontend-architect agent's principles:
+- Print `🏗️  [frontend-architect] Starting chore planning...` when beginning
+- Print `📚 [frontend-architect] Loading skill: {skill-name}` when referencing skills
+- Print `📍 [frontend-architect] Analyzing: {area}` when researching
+- Print `✅ [frontend-architect] Planning complete.` when finished
+
+## Instructions
+
+### Step 1: Load Configuration
+
+Read `.claude/frontend-dev-toolkit.json` to get project settings.
+
 ### Step 2: Analyze the Chore
 
-Based on `$ARGUMENTS`, determine the type:
+```
+🏗️  [frontend-architect] Starting chore planning...
+```
 
+Based on `$ARGUMENTS`, determine the type:
 - **Refactoring:** Code restructuring without behavior change
 - **Dependency Update:** Updating packages
 - **Technical Debt:** Addressing known issues
@@ -38,6 +71,10 @@ Based on `$ARGUMENTS`, determine the type:
 - **Cleanup:** Removing dead code
 
 ### Step 3: Research Impact
+
+```
+📍 [frontend-architect] Analyzing: {affected area}
+```
 
 1. Identify affected files
 2. Check for dependencies on affected code
@@ -78,18 +115,46 @@ Create the plan file at `{specsPath}/chore-{descriptive-name}.md`:
 ### Out of Scope
 - {What will NOT be changed}
 
-## Affected Files
+## Relevant Files
 
-- `{path/to/file1}` - {what will change}
-- `{path/to/file2}` - {what will change}
+### Files to Modify
+- {path/to/file} - {what will change}
 
-## Implementation Plan
+### Files to Reference
+- {path/to/file} - {why it's relevant}
 
-### Step 1: {Task}
+## Performance Architecture (if refactoring views)
+
+**Include this section if the chore involves refactoring views with tables/filters/modals.**
+
+### State Location Rules
+
+| State Type | Required Location | Why |
+|------------|-------------------|-----|
+| Modal open/close | Zustand store | Prevents parent re-renders |
+| Selection state | Zustand store | Prevents props drilling |
+| URL filters | useSearchParams | URL sync |
+
+### Memoization Requirements
+
+- All split components: `React.memo`
+- All handlers passed to children: `useCallback`
+- All Zustand object selectors: `useShallow`
+
+## Step by Step Tasks
+
+IMPORTANT: Execute every step in order, top to bottom.
+
+### 1. {First Task}
 - {Specific action}
 
-### Step 2: {Task}
+### 2. {Second Task}
 - {Specific action}
+
+### 3. Validate Changes
+- Run type checking
+- Run linting
+- Run build
 
 ## Risk Assessment
 
@@ -126,8 +191,10 @@ Create the plan file at `{specsPath}/chore-{descriptive-name}.md`:
 ### Step 5: Display Success Message
 
 ```
+✅ [frontend-architect] Planning complete.
+
 ═══════════════════════════════════════════════════
-           CHORE PLAN CREATED
+            PLAN CREATED SUCCESSFULLY
 ═══════════════════════════════════════════════════
 
 Plan saved to: {plan_file_path}
@@ -143,6 +210,8 @@ Files Affected: {count}
 To implement this chore, run:
 
   /dev:implement {plan_file_path}
+
+This will execute the step-by-step tasks from your plan.
 
 ═══════════════════════════════════════════════════
 ```

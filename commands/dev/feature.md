@@ -14,22 +14,49 @@ Load project configuration from `.claude/frontend-dev-toolkit.json` to determine
 - Package manager
 - Validation commands
 
-## Critical Rules
+## ⛔ CRITICAL: PLANNING ONLY - NO IMPLEMENTATION
 
 **This command creates a PLAN only. You MUST NOT implement any changes.**
 
 ### Forbidden Actions
-- DO NOT edit any source files (only create the plan file)
-- DO NOT implement the feature
-- DO NOT modify any code
-- DO NOT run implementation commands
+- ❌ DO NOT edit any source files (only create the plan file)
+- ❌ DO NOT implement the feature
+- ❌ DO NOT modify any code
+- ❌ DO NOT run implementation commands
+- ❌ DO NOT create components, hooks, or any feature code
 
 ### Required Actions
-- Research and analyze the feature requirements
-- Design the architecture and component structure
-- Create the plan file in the specs directory
-- Display the "PLAN CREATED SUCCESSFULLY" message
-- Suggest running `/dev:implement {plan_path}` for implementation
+- ✅ Research and analyze the feature requirements
+- ✅ Design the architecture and component structure
+- ✅ Create the plan file in the specs directory
+- ✅ Display the "PLAN CREATED SUCCESSFULLY" message
+- ✅ Suggest running `/dev:implement {plan_path}` for implementation
+- ✅ STOP after showing the suggested next steps
+
+### Workflow Enforcement
+```
+/dev:feature → Creates plan file → STOPS → User reviews plan → User runs /dev:implement
+```
+
+**If you implement ANY code changes after creating the plan, you have violated this command's purpose.**
+
+## Agent Invocation
+
+Before starting the planning process, print this announcement:
+
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [frontend-architect] agent...
+   └─ Task: Feature Planning
+   └─ Model: opus
+═══════════════════════════════════════════════════
+```
+
+Then apply the frontend-architect agent's principles throughout this planning process:
+- Print `🏗️  [frontend-architect] Starting architectural planning...` when beginning
+- Print `📚 [frontend-architect] Loading skill: {skill-name}` when referencing skills
+- Print `📍 [frontend-architect] Analyzing: {file-or-pattern}` when researching codebase
+- Print `✅ [frontend-architect] Planning complete.` when finished
 
 ## Instructions
 
@@ -47,36 +74,31 @@ const srcPath = config.paths.src || 'src';
 
 Based on `config.techStack`, load the appropriate skills:
 
-**Always load:**
+**Always load (core):**
 - `react-guidelines`
 - `typescript-standards`
 - `tailwind-patterns`
 
-**Conditionally load:**
-- `tanstack-query` if dataFetching === 'tanstack-query'
-- `zod-validation` if validation === 'zod'
-- `zustand-state` if stateManagement === 'zustand'
-- `react-router` if routing === 'react-router'
+**Conditionally load (optional):**
+- `tanstack-query` if dataFetching includes 'tanstack-query'
+- `zod-validation` if validation includes 'zod'
+- `zustand-state` if stateManagement includes 'zustand'
+- `react-router` if routing includes 'react-router'
+- `react-forms` if working with forms
+- `react-performance` if performance-critical feature
 
-Print:
+Print skill loading:
 ```
-═══════════════════════════════════════════════════
-🚀 Invoking [frontend-architect] agent...
-   └─ Task: Feature Planning
-   └─ Tech Stack: {list from config}
-═══════════════════════════════════════════════════
-
-📚 Loading skills:
-   └─ react-guidelines (core)
-   └─ typescript-standards (core)
-   └─ {additional skills based on config}
+📚 [frontend-architect] Loading skill: react-guidelines (core)
+📚 [frontend-architect] Loading skill: typescript-standards (core)
+📚 [frontend-architect] Loading skill: tanstack-query (optional)
 ```
 
 ### Step 3: Parse Input
 
 **If $ARGUMENTS is a file path (ends with .md or starts with ./):**
 - Read the file and extract feature information
-- Look for XML tags: `<objective>`, `<user_story>`, `<requirements>`
+- Look for XML tags: `<objective>`, `<user_story>`, `<requirements>`, `<constraints>`
 
 **If $ARGUMENTS is text:**
 - Use it directly as the feature description
@@ -84,6 +106,12 @@ Print:
 ### Step 4: Research Codebase
 
 Before planning, explore the codebase:
+
+```
+📍 [frontend-architect] Analyzing: project structure
+📍 [frontend-architect] Analyzing: existing patterns in {srcPath}/features/
+📍 [frontend-architect] Analyzing: similar implementations
+```
 
 1. Read project README if exists
 2. Check existing patterns in `{srcPath}/features/` or `{srcPath}/components/`
@@ -122,36 +150,52 @@ So that {benefit/value}
 
 {How will this feature solve the problem?}
 
-## Architecture Design
+## Performance Architecture
+
+**CRITICAL: Design for render isolation BEFORE implementation.**
+
+### State Location Rules
+
+| State Type | Location | Why |
+|------------|----------|-----|
+| Modal open/close | Zustand store | Prevents parent re-renders |
+| Selection state | Zustand store | Prevents props drilling |
+| URL filters | useSearchParams | URL sync |
+| Server data | TanStack Query | Automatic caching |
 
 ### Component Hierarchy
 
 ```
 {FeatureName}/
-├── {FeatureName}View.tsx          # Main view component
+├── {FeatureName}View.tsx          # Orchestrator
 ├── components/
-│   ├── {FeatureName}Header.tsx    # Header with actions
-│   ├── {FeatureName}Content.tsx   # Main content area
-│   └── {FeatureName}Modals.tsx    # Modal components
+│   ├── {FeatureName}Header.tsx    # React.memo wrapped
+│   ├── {FeatureName}Content.tsx   # React.memo wrapped
+│   └── {FeatureName}Modals.tsx    # Isolated, reads from Zustand
 ├── hooks/
-│   └── use{FeatureName}.ts        # Feature-specific hooks
+│   └── use{FeatureName}.ts
+├── stores/
+│   └── use{FeatureName}Store.ts   # Modal/selection state
 ├── api/
-│   ├── schema.ts                  # Zod schemas (if using)
-│   ├── queries.ts                 # Query definitions (if using TanStack Query)
+│   ├── schema.ts                  # Zod schemas
+│   ├── queries.ts                 # Query definitions
 │   └── mutations.ts               # Mutation definitions
 └── types/
-    └── index.ts                   # TypeScript types
+    └── index.ts
 ```
 
-### State Management
+### State Ownership Map
 
 | State | Location | Subscribers | Re-render Scope |
 |-------|----------|-------------|-----------------|
 | {state name} | {location} | {components} | {scope} |
 
-### Data Flow
+### Memoization Plan
 
-{Describe how data flows through the feature}
+- [ ] `Component` → `React.memo` (receives stable props)
+- [ ] `handler` → `useCallback` (passed to memoized child)
+- [ ] `computedValue` → `useMemo` (expensive computation)
+- [ ] `storeSelector` → `useShallow` (Zustand object selector)
 
 ## Relevant Files
 
@@ -174,40 +218,43 @@ So that {benefit/value}
 
 ## Step by Step Tasks
 
+IMPORTANT: Execute every step in order, top to bottom.
+
 ### 1. Setup Feature Structure
 - Create feature directory at `{srcPath}/features/{feature-name}/`
-- Create subdirectories: `api/`, `components/`, `hooks/`, `types/`
+- Create subdirectories: `api/`, `components/`, `hooks/`, `stores/`, `types/`
 
 ### 2. Define Types and Schemas
 - Create TypeScript interfaces in `types/index.ts`
-- Create Zod schemas in `api/schema.ts` (if using Zod)
+- Create Zod schemas in `api/schema.ts`
 
-### 3. Implement API Layer
+### 3. Create Zustand Store (if modals/selection)
+- Create store with modal state and actions
+- Export focused selector hooks with `useShallow`
+
+### 4. Implement API Layer
 - Create query definitions in `api/queries.ts`
 - Create mutation definitions in `api/mutations.ts`
 
-### 4. Build Components
+### 5. Build Components
 - Create main view component
-- Create child components with proper memoization
-- Add loading and error states
+- Create child components with `React.memo`
+- Use `useCallback` for handlers passed to children
+- Add loading and error states with Suspense
 
-### 5. Add Routing (if applicable)
+### 6. Add Routing (if applicable)
 - Add route in router configuration
 - Create lazy-loaded route component
 
-### 6. Validate Implementation
+### 7. Validate Implementation
 - Run type checking
 - Run linting
 - Run build
-- Manual testing
 
 ## Testing Strategy
 
 ### Unit Tests
 - {Component/hook} should {behavior}
-
-### Integration Tests
-- {Feature} should {end-to-end behavior}
 
 ### Edge Cases
 - {Edge case description}
@@ -236,6 +283,8 @@ Execute these commands to validate the implementation:
 ### Step 6: Display Success Message
 
 ```
+✅ [frontend-architect] Planning complete.
+
 ═══════════════════════════════════════════════════
             PLAN CREATED SUCCESSFULLY
 ═══════════════════════════════════════════════════

@@ -10,6 +10,78 @@ Execute a plan document step-by-step. This command reads a plan file and impleme
 
 Load project configuration from `.claude/frontend-dev-toolkit.json`.
 
+## Agent Invocation
+
+Before starting implementation, print this announcement:
+
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [react-developer] agent...
+   └─ Task: Implementation
+   └─ Model: sonnet
+   └─ Plan: {plan_file_path}
+═══════════════════════════════════════════════════
+```
+
+Then apply the react-developer agent's principles throughout implementation:
+- Print `⚛️  [react-developer] Starting implementation...` when beginning
+- Print `📚 [react-developer] Loading skill: {skill-name}` when referencing skills
+- Print `📄 [react-developer] Creating: {file-path}` when creating files
+- Print `✏️  [react-developer] Editing: {file-path}` when editing files
+- Print `✅ [react-developer] Implementation complete.` when finished
+
+### Specialist Agents (invoke as needed)
+
+During implementation, if you encounter specific needs, invoke specialist agents:
+
+**For TypeScript errors or complex type work:**
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [typescript-expert] agent...
+   └─ Task: Type Error Resolution
+   └─ Model: sonnet
+═══════════════════════════════════════════════════
+```
+Print `📘 [typescript-expert] Analyzing types...` when starting.
+Print `🔧 [typescript-expert] Fixing: {error-description}` when fixing.
+Print `✅ [typescript-expert] Type issues resolved.` when done.
+
+**For styling work:**
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [ui-stylist] agent...
+   └─ Task: Component Styling
+   └─ Model: sonnet
+═══════════════════════════════════════════════════
+```
+Print `🎨 [ui-stylist] Starting styling work...` when starting.
+Print `✨ [ui-stylist] Styling: {component-name}` when styling.
+Print `✅ [ui-stylist] Styling complete.` when done.
+
+**For codebase exploration:**
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [explorer] agent...
+   └─ Task: Codebase Search
+   └─ Model: haiku
+═══════════════════════════════════════════════════
+```
+Print `🔍 [explorer] Searching codebase...` when starting.
+Print `📍 [explorer] Found: {description}` when finding results.
+Print `✅ [explorer] Search complete.` when done.
+
+**For debugging or finding solutions online:**
+```
+═══════════════════════════════════════════════════
+🚀 Invoking [web-research-specialist] agent...
+   └─ Task: Research & Debugging
+   └─ Model: sonnet
+═══════════════════════════════════════════════════
+```
+Print `🌐 [web-research-specialist] Starting research...` when starting.
+Print `📚 [web-research-specialist] Found: {source-description}` when finding sources.
+Print `✅ [web-research-specialist] Research complete.` when done.
+
 ## Instructions
 
 ### Step 1: Load and Validate Plan
@@ -17,11 +89,7 @@ Load project configuration from `.claude/frontend-dev-toolkit.json`.
 Read the plan file from `$ARGUMENTS`:
 
 ```
-═══════════════════════════════════════════════════
-🚀 Invoking [react-developer] agent...
-   └─ Task: Plan Implementation
-   └─ Plan: {plan_file_path}
-═══════════════════════════════════════════════════
+⚛️  [react-developer] Starting implementation...
 ```
 
 Parse the plan to extract:
@@ -62,39 +130,37 @@ For each task in the "Step by Step Tasks" section:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-2. **Read relevant files** mentioned in the task
+2. **Load relevant skills** for the task type:
+   - Creating components → `react-guidelines`
+   - Adding types → `typescript-standards`
+   - Styling → `tailwind-patterns`
+   - Data fetching → `tanstack-query`
+   - Form validation → `zod-validation`, `react-forms`
+   - Performance → `react-performance`
 
-3. **Implement the changes** following:
+3. **Read relevant files** mentioned in the task
+
+4. **Implement the changes** following:
    - Project patterns from loaded skills
    - Tech stack from configuration
    - Existing code conventions
 
-4. **Verify after each task:**
+5. **Invoke specialist agents** as needed:
+   - TypeScript errors → invoke `typescript-expert`
+   - Complex styling → invoke `ui-stylist`
+   - Need to find patterns → invoke `explorer`
+   - Stuck on issue → invoke `web-research-specialist`
+
+6. **Verify after each task:**
    - Run type check if TypeScript files changed
    - Ensure no obvious errors
 
-5. **Mark task complete:**
+7. **Mark task complete:**
 ```
 ✅ Task {N} complete: {brief summary of changes}
 ```
 
-### Step 4: Load Skills Based on Context
-
-As you implement, load relevant skills:
-
-- Creating components → `react-guidelines`
-- Adding types → `typescript-standards`
-- Styling → `tailwind-patterns`
-- Data fetching → `tanstack-query` (if configured)
-- Form validation → `zod-validation` (if configured)
-- State management → `zustand-state` (if configured)
-
-Print when loading:
-```
-📚 Loading skill: {skill-name}
-```
-
-### Step 5: Run Validation Commands
+### Step 4: Run Validation Commands
 
 After all tasks complete, run validation from the plan:
 
@@ -111,11 +177,12 @@ Execute each validation command:
 
 If validation fails:
 1. Identify the error
-2. Fix the issue
-3. Re-run validation
-4. Continue until all pass
+2. Invoke appropriate specialist agent if needed
+3. Fix the issue
+4. Re-run validation
+5. Continue until all pass
 
-### Step 6: Verify Acceptance Criteria
+### Step 5: Verify Acceptance Criteria
 
 Check each acceptance criterion from the plan:
 
@@ -129,9 +196,11 @@ Check each acceptance criterion from the plan:
 ⚠️ {Criterion 3} - Needs manual verification
 ```
 
-### Step 7: Display Completion Summary
+### Step 6: Display Completion Summary
 
 ```
+✅ [react-developer] Implementation complete.
+
 ═══════════════════════════════════════════════════
          IMPLEMENTATION COMPLETE
 ═══════════════════════════════════════════════════
@@ -157,16 +226,19 @@ Acceptance Criteria: {X}/{Y} verified
               SUGGESTED NEXT STEPS
 ═══════════════════════════════════════════════════
 
-1. VERIFY (recommended):
+1. SIMPLIFY CODE (recommended - removes over-engineering):
+   /dev:simplify
+
+2. VERIFY CHANGES (type-check + lint + build):
    /verify
 
-2. CODE REVIEW:
+3. CODE REVIEW:
    /review
 
-3. CREATE COMMIT:
+4. CREATE COMMIT:
    /utils:commit
 
-4. CREATE PR:
+5. CREATE PR:
    /utils:pr
 
 ═══════════════════════════════════════════════════
@@ -195,19 +267,34 @@ Acceptance Criteria: {X}/{Y} verified
 - Types in dedicated files
 - Keep files focused and small
 
+### When to Invoke Specialist Agents
+
+| Situation | Agent to Invoke |
+|-----------|-----------------|
+| TypeScript compilation errors | typescript-expert |
+| Complex generic types needed | typescript-expert |
+| Styling complex layouts | ui-stylist |
+| Animation implementation | ui-stylist |
+| Finding similar patterns | explorer |
+| Locating implementations | explorer |
+| Debugging strange errors | web-research-specialist |
+| Finding best practices | web-research-specialist |
+
 ## Error Handling
 
 If implementation encounters errors:
 
-1. **Type errors:** Fix immediately, don't proceed with broken types
+1. **Type errors:** Invoke `typescript-expert`, fix immediately
 2. **Lint errors:** Fix or disable with explanation
 3. **Build errors:** Must resolve before completing
 4. **Missing dependencies:** Install and document
+5. **Stuck on issue:** Invoke `web-research-specialist`
 
 ## Report
 
 Return a summary of:
 - Tasks completed
 - Files created/modified
+- Agents invoked during implementation
 - Validation results
 - Any manual steps needed
