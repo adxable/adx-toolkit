@@ -22,22 +22,37 @@ A Claude Code plugin for React/TypeScript frontend development with autonomous a
 ### One-liner Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/adxable/adx-toolkit/main/install.sh | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/adxable/adx-toolkit/main/install-adx.sh)
 ```
 
 This will:
-1. Clone the plugin to `~/.claude/plugins/adx-toolkit`
-2. Launch interactive setup wizard
-3. Configure your project with your tech stack preferences
+1. Add the ADX marketplace to Claude Code
+2. Install the ADX plugin with all commands namespaced as `/adx:*`
 
-### Manual Install
+### Manual Install (via Claude Code CLI)
 
 ```bash
-# Clone to your plugins directory
-git clone https://github.com/adxable/adx-toolkit.git ~/.claude/plugins/adx-toolkit
+# Add the marketplace
+claude plugin marketplace add adxable/adx-toolkit
 
-# Run interactive setup
-~/.claude/plugins/adx-toolkit/setup.sh
+# Install the plugin
+claude plugin install adx@adx-marketplace
+```
+
+### Interactive Install (via Claude Code)
+
+1. Run `/plugin` in Claude Code
+2. Go to **Marketplaces** tab → Add `adxable/adx-toolkit`
+3. Go to **Browse** tab → Install `adx`
+
+### Project Setup (Optional)
+
+After installing the plugin, run the setup wizard to configure your project:
+
+```bash
+# Clone and run setup for hooks, memory, and CLAUDE.md
+git clone https://github.com/adxable/adx-toolkit.git /tmp/adx-toolkit
+/tmp/adx-toolkit/setup.sh
 ```
 
 ### Development (Symlink)
@@ -54,54 +69,54 @@ ln -s /path/to/adx-toolkit ~/.claude/plugins/adx-toolkit
 
 ```bash
 # Single-pass autonomous (you may need to intervene on errors)
-/ship "add user authentication with JWT"
+/adx:ship "add user authentication with JWT"
 
 # With browser verification (recommended for UI features)
-/ship "add login form" --browser
+/adx:ship "add login form" --browser
 
 # Fully autonomous loop until PR (fire and forget)
-/ralph "add dashboard with charts" --browser --monitor
+/adx:ralph "add dashboard with charts" --browser --monitor
 ```
 
 **Modes:**
-- `/ship` - Single pass through pipeline, stops on completion or error
-- `/ralph` - Continuous loop until PR created, handles failures automatically
+- `/adx:ship` - Single pass through pipeline, stops on completion or error
+- `/adx:ralph` - Continuous loop until PR created, handles failures automatically
 
 ### Individual Commands
 
 | Command | Description | Agent Used |
 |---------|-------------|------------|
-| `/plan <description>` | Research and create implementation plan | `explorer` |
-| `/implement <plan-path>` | Execute plan step by step | `web-researcher` (if stuck) |
-| `/refactor [files]` | Clean up code, remove technical debt | `refactorer` |
-| `/verify [url]` | Type check + lint + build loop | - |
-| `/review [files]` | Code review, generate report | `code-reviewer`, `performance-auditor`, `accessibility-tester` |
-| `/review --browser` | Code review + visual verification | Above + `browser-tester` |
-| `/review --browser-only` | Visual verification only | `browser-tester` |
-| `/commit [type]` | Create git commit | `git-automator` |
-| `/pr [base]` | Create pull request | `git-automator` |
-| `/ralph <description>` | Fully autonomous loop until PR | All agents (via RALPH) |
+| `/adx:plan <description>` | Research and create implementation plan | `explorer` |
+| `/adx:implement <plan-path>` | Execute plan step by step | `web-researcher` (if stuck) |
+| `/adx:refactor [files]` | Clean up code, remove technical debt | `refactorer` |
+| `/adx:verify [url]` | Type check + lint + build loop | - |
+| `/adx:review [files]` | Code review, generate report | `code-reviewer`, `performance-auditor`, `accessibility-tester` |
+| `/adx:review --browser` | Code review + visual verification | Above + `browser-tester` |
+| `/adx:review --browser-only` | Visual verification only | `browser-tester` |
+| `/adx:commit [type]` | Create git commit | `git-automator` |
+| `/adx:pr [base]` | Create pull request | `git-automator` |
+| `/adx:ralph <description>` | Fully autonomous loop until PR | All agents (via RALPH) |
 
 ### Workflow Diagram
 
 ```
-/plan "feature description"
+/adx:plan "feature description"
     │
     ↓ creates .claude/plans/plan-{name}.md
 
-/implement .claude/plans/plan-{name}.md
+/adx:implement .claude/plans/plan-{name}.md
     │
     ↓ creates/modifies files
 
-/refactor
+/adx:refactor
     │
     ↓ cleans up code (refactorer agent)
 
-/verify
+/adx:verify
     │
     ↓ type check + lint + build
 
-/review --browser
+/adx:review --browser
     │
     ├── Phase 1: Code Review (3 agents parallel)
     │   ├── code-reviewer
@@ -113,11 +128,11 @@ ln -s /path/to/adx-toolkit ~/.claude/plugins/adx-toolkit
     │
     ↓ generates .claude/reviews/review-{date}.md
 
-/commit
+/adx:commit
     │
     ↓ creates commit with Co-Authored-By
 
-/pr
+/adx:pr
     │
     ↓ creates PR with description
 
@@ -216,13 +231,13 @@ Claude can:
 
 ```bash
 # Code review + browser verification
-/review --browser
+/adx:review --browser
 
 # Browser verification only (skip code review)
-/review --browser-only
+/adx:review --browser-only
 
 # Full ship workflow with browser
-/ship "add user dashboard" --browser
+/adx:ship "add user dashboard" --browser
 ```
 
 ---
@@ -280,23 +295,23 @@ cd .ralph-projects/add-user-authentication
 ralph --monitor --timeout 60
 ```
 
-Or use the `/ralph` command:
+Or use the `/adx:ralph` command:
 
 ```bash
-/ralph "add shopping cart" --browser --monitor
+/adx:ralph "add shopping cart" --browser --monitor
 ```
 
-### /ship vs /ralph
+### /adx:ship vs /adx:ralph
 
-| Aspect | /ship | /ralph |
-|--------|-------|--------|
+| Aspect | /adx:ship | /adx:ralph |
+|--------|-----------|------------|
 | Execution | Single pass | Loop until done |
 | Failures | Stop and report | Retry automatically |
 | Duration | Minutes | Minutes to hours |
 | Human involvement | May need intervention | Fire and forget |
 | Best for | Known scope | Complex/exploratory |
 
-### When to Use /ralph
+### When to Use /adx:ralph
 
 - **Overnight development** - Start before bed, wake up to PR
 - **Complex features** - Multiple unknowns, likely failures
@@ -469,11 +484,32 @@ Persistent context across sessions.
 
 ## Installation
 
-### Recommended: Interactive Setup
+### Recommended: One-liner Install
 
 ```bash
-# Install and configure in one command
-curl -fsSL https://raw.githubusercontent.com/adxable/adx-toolkit/main/install.sh | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/adxable/adx-toolkit/main/install-adx.sh)
+```
+
+This installs the ADX plugin to Claude Code with all commands namespaced as `/adx:*`.
+
+### Manual Installation (via Claude Code CLI)
+
+```bash
+# Add the marketplace
+claude plugin marketplace add adxable/adx-toolkit
+
+# Install the plugin
+claude plugin install adx@adx-marketplace
+```
+
+### Project Setup (Optional)
+
+After installing the plugin, configure your project with hooks, memory, and CLAUDE.md:
+
+```bash
+# Clone and run setup
+git clone https://github.com/adxable/adx-toolkit.git /tmp/adx-toolkit
+/tmp/adx-toolkit/setup.sh
 ```
 
 The setup wizard will ask you about:
@@ -482,28 +518,6 @@ The setup wizard will ask you about:
 - **Features** - Hooks, MCP servers, memory system
 - **Agents** - Which specialized agents to enable
 
-### Manual Installation
-
-```bash
-# 1. Clone the plugin
-git clone https://github.com/adxable/adx-toolkit.git ~/.claude/plugins/adx-toolkit
-
-# 2. Run setup for your project
-cd /your-project
-~/.claude/plugins/adx-toolkit/setup.sh
-
-# Or copy files manually:
-cp ~/.claude/plugins/adx-toolkit/CLAUDE.md /your-project/CLAUDE.md
-cp -r ~/.claude/plugins/adx-toolkit/hooks /your-project/.claude/hooks
-cp ~/.claude/plugins/adx-toolkit/settings.json /your-project/.claude/settings.json
-```
-
-### Reconfigure Existing Project
-
-```bash
-~/.claude/plugins/adx-toolkit/setup.sh
-```
-
 ---
 
 ## Usage Examples
@@ -511,47 +525,47 @@ cp ~/.claude/plugins/adx-toolkit/settings.json /your-project/.claude/settings.js
 ### Ship a feature (fully autonomous)
 
 ```bash
-/ship add user profile page with avatar upload
+/adx:ship add user profile page with avatar upload
 ```
 
 ### Ship with browser verification (recommended for UI)
 
 ```bash
-/ship add dashboard with charts --browser
+/adx:ship add dashboard with charts --browser
 ```
 
 ### Plan first, then implement (controlled)
 
 ```bash
-/plan add shopping cart functionality
+/adx:plan add shopping cart functionality
 # Review the plan at .claude/plans/plan-shopping-cart.md
 # Make adjustments if needed
 
-/implement .claude/plans/plan-shopping-cart.md
-/refactor
-/verify
-/review --browser  # With visual verification
-/commit
-/pr
+/adx:implement .claude/plans/plan-shopping-cart.md
+/adx:refactor
+/adx:verify
+/adx:review --browser  # With visual verification
+/adx:commit
+/adx:pr
 ```
 
 ### Quick refactor
 
 ```bash
-/refactor src/features/users/
+/adx:refactor src/features/users/
 ```
 
 ### Code review only
 
 ```bash
-/review
+/adx:review
 # Check report at .claude/reviews/review-{date}.md
 ```
 
 ### Browser verification only
 
 ```bash
-/review --browser-only
+/adx:review --browser-only
 # Claude uses Chrome extension to view UI, verifies it, fixes issues if found
 ```
 
@@ -572,7 +586,7 @@ ralph --monitor --timeout 120
 
 ```bash
 # Start RALPH with monitoring dashboard
-/ralph "implement payment integration" --browser --monitor
+/adx:ralph "implement payment integration" --browser --monitor
 
 # RALPH will loop until PR is created or circuit breaker trips
 ```

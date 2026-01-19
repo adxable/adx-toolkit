@@ -8,8 +8,8 @@
     {
       "name": "adx",
       "source": {
-        "source": "url",
-        "url": "https://github.com/adxable/adx-toolkit.git"
+        "source": "github",
+        "repo": "adxable/adx-toolkit"
       },
       "description": "Autonomous agentic workflow plugin for React/TypeScript frontend development. Features /ship, /ralph, browser verification, 9 specialized agents.",
       "version": "2.0.0"
