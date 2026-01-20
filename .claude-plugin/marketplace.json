@@ -12,7 +12,7 @@
         "repo": "adxable/adx-toolkit"
       },
       "description": "Autonomous agentic workflow plugin for React/TypeScript frontend development. Features /ship, /ralph, browser verification, 9 specialized agents.",
-      "version": "2.0.0"
+      "version": "3.0.0"
     }
   ]
 }
