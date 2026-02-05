@@ -234,17 +234,20 @@ Run `setup.sh` to configure:
 
 ADX Toolkit uses minimal MCP configuration. Most functionality uses Claude Code's built-in tools.
 
-**Required MCP (in `mcp.json`):**
+**Available MCP (in `mcp.json`):**
 
-| Server | Purpose | Used By |
-|--------|---------|---------|
-| `context7` | Up-to-date library documentation | planner, implementer, web-researcher |
+| Server | Purpose | Enabled by Default |
+|--------|---------|-------------------|
+| `context7` | Up-to-date library documentation | ✅ Yes |
+| `sequential-thinking` | Enhanced reasoning for complex problems | ❌ No |
 
-**Optional MCP (user-installed):**
+**External MCP (user-installed):**
 
 | Server | Purpose | Used By |
 |--------|---------|---------|
 | `claude-in-chrome` | Browser automation and visual testing | browser-tester, verify, investigate |
+
+> **Note:** Browser testing uses `claude-in-chrome` (Chrome extension), not Playwright MCP.
 
 ### Configuration Files
 
@@ -260,6 +263,13 @@ In `settings.json`:
 {
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": ["context7"]
+}
+```
+
+To enable sequential-thinking for complex reasoning tasks:
+```json
+{
+  "enabledMcpjsonServers": ["context7", "sequential-thinking"]
 }
 ```
 
