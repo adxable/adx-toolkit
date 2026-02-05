@@ -180,16 +180,98 @@ memory/
 
 ---
 
-## Setup Options
+## Setup & Configuration
+
+### Prerequisites
+
+ADX Toolkit hooks are written in Python and use `uv` for fast dependency management.
+
+**macOS:**
+```bash
+# Install Python 3.11+
+brew install python@3.12
+
+# Install uv (fast Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Linux:**
+```bash
+# Install Python 3.11+
+sudo apt install python3.12 python3.12-venv  # Debian/Ubuntu
+# or
+sudo dnf install python3.12                   # Fedora
+
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows (WSL recommended):**
+```bash
+# In WSL, follow Linux instructions above
+# Or use winget:
+winget install astral-sh.uv
+```
+
+**Verify installation:**
+```bash
+python3 --version  # Should be 3.11+
+uv --version       # Should be 0.4+
+```
+
+### Setup Script
 
 Run `setup.sh` to configure:
 
 | Feature | Description |
 |---------|-------------|
-| Hooks | Context detection, knowledge retrieval |
+| Hooks | Context detection, knowledge retrieval, state persistence |
 | Memory | Semantic knowledge store with TF-IDF search |
 | State | Phase-based progress tracking |
-| MCP | Sequential thinking, Playwright |
+| MCP | Context7 for library documentation |
+
+### MCP Servers
+
+ADX Toolkit uses minimal MCP configuration. Most functionality uses Claude Code's built-in tools.
+
+**Required MCP (in `mcp.json`):**
+
+| Server | Purpose | Used By |
+|--------|---------|---------|
+| `context7` | Up-to-date library documentation | planner, implementer, web-researcher |
+
+**Optional MCP (user-installed):**
+
+| Server | Purpose | Used By |
+|--------|---------|---------|
+| `claude-in-chrome` | Browser automation and visual testing | browser-tester, verify, investigate |
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `mcp.json` | MCP server definitions (copy to `.claude/mcp.json`) |
+| `settings.json` | Hooks, permissions, enabled MCP servers |
+
+### Enabling MCP Servers
+
+In `settings.json`:
+```json
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["context7"]
+}
+```
+
+Only servers listed in `enabledMcpjsonServers` are loaded at startup. MCP servers cannot be loaded dynamically during a session.
+
+### Browser Testing Setup
+
+For visual UI testing with `/adx:verify --browser` or `/adx:review --browser`:
+
+1. Install [Claude Chrome extension](https://chromewebstore.google.com/detail/claude-for-chrome/)
+2. The extension provides `claude-in-chrome` MCP tools globally
+3. No additional configuration needed in `mcp.json`
 
 ---
 

@@ -2,41 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "_comment": "MCP Server configurations for Claude Code. Copy to your project's .claude/mcp.json",
   "mcpServers": {
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@anthropics/mcp-server-sequential-thinking"],
-      "description": "Enhanced reasoning for complex multi-step problems"
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@anthropics/mcp-server-playwright"],
-      "description": "Browser automation for testing and verification"
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@anthropics/mcp-server-filesystem",
-        "--root",
-        "."
-      ],
-      "description": "Enhanced file system operations"
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@anthropics/mcp-server-memory"],
-      "description": "Persistent memory across sessions"
-    },
-    "fetch": {
-      "command": "npx",
-      "args": ["-y", "@anthropics/mcp-server-fetch"],
-      "description": "HTTP requests for API testing"
-    },
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@anthropics/mcp-server-git"],
-      "description": "Enhanced git operations"
-    },
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
